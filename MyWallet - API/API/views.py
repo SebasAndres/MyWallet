@@ -7,4 +7,5 @@ def log_in (request, user, psw):
     return JsonResponse(resp)
 
 def home_view_data (request, user_key):
+    resp = home_view_data(user_key)
     return JsonResponse({"a": "b"})
