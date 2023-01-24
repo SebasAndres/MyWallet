@@ -3,7 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 
 # Use a service account.
-cred = credentials.Certificate('API/firestore_key.json')
+cred = credentials.Certificate('API/scripts/firestore_key.json')
 app = firebase_admin.initialize_app(cred)
 db = firestore.client()
 
@@ -16,3 +16,6 @@ def LoginAuth (user, psw):
         if usr_data_i["User"] == user and usr_data_i["Psw"] == psw:
             return { "status": 200, "auth": True, "user_key": doc.id }
     return { "status": 200, "auth": False }
+
+def home_view_data (user_key):
+    return {}
