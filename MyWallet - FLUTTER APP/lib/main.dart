@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:mywallet/home.dart';
@@ -55,111 +53,72 @@ class _LogInPageState extends State<LogInPage> {
         appBar: AppBar(
           title: Text("My Wallet - Log In"),
         ),
-        body: FutureBuilder(
-          future: getData(),
-          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-              return GestureDetector(
-                onTap: () { setState(() { loginActive = !loginActive;}); },
-                child: Center(
-                  child:
-                  AnimatedContainer(
-                      width: loginActive ? 350.0 : 300.0,
-                      height: loginActive ? 360.0 : 100.0,
-                      color: loginActive ? Colors.indigo[300]: Colors.black,
-                      alignment: loginActive ? Alignment.center : AlignmentDirectional.topCenter,
-                      duration: const Duration(seconds: 1),
-                      curve: Curves.fastOutSlowIn,
-                      child: loginActive ? Wrap(
-                        direction: Axis.vertical,
-                        spacing: 20,
-                        children: [
-                          Text("User", style: GoogleFonts.abel(fontSize: 25, color: Colors.white)),
-                          SizedBox(
-                            width: 250,
-                            child:
-                            TextField(
-                              controller: nameInput_ctrl,
-                              style: TextStyle(color: Colors.white),
-                              decoration: InputDecoration(
-                                    labelText: "Ingresa el usuario",
-                                    border: OutlineInputBorder(),
-                                ),
-                              cursorColor: Colors.white,
-                            ),
-                          ),
-                          Text("Password", style: GoogleFonts.abel(fontSize: 25, color: Colors.white)),
-                          SizedBox(
-                            width: 250,
-                            child:
-                            TextField(
-                                obscureText: true,
-                                enableSuggestions: false,
-                                autocorrect: false,
-                                controller: pwdInput_ctrl,
-                                style: TextStyle(color: Colors.white),
-                                decoration: InputDecoration(
-                                    labelText: "Ingresa la contraseña",
-                                    border: OutlineInputBorder()
-                                ),
-                              cursorColor: Colors.white,
-                            ),
-                          ),
-                          ElevatedButton(
-                            style: OutlinedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              primary: Colors.white, //<-- SEE HERE
-                            ),
-                            child: Text("Ingresar"),
-                            onPressed: () {
-                              // AUTH PROCESS
-                              String user = nameInput_ctrl.text;
-                              String pwd = pwdInput_ctrl.text;
-                              bool found = false;
-                              if (user != "" && pwd != "") {
-                                QuerySnapshot snap = snapshot.data!;
-                                int M = snap.docs.length;
-                                for (int j=0 ; j < M ; j++) {
-                                  if (snap.docs[j]["User"] == user &&
-                                      snap.docs[j]["Psw"] == pwd) {
-                                      found = true;
-                                      String USER_KEY = snap.docs[j].id;
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => HomePage(USER_KEY: USER_KEY, NAME: user)),
-                                      );
-                                  }
-                                  if (!found) {
-                                    errorLogIn(context);
-                                  }
-                                }
-                              }
-                              else { errorLogIn (context); }
-                            } , //
-                          )
-                        ],
-                      ) : PreviewLogin
-                  ),
-                ),
-              );
-            } 
-            else if (snapshot.connectionState == ConnectionState.none) {
-              return Text("No data");
-            }
-            return Center(
-              child:
-              Column(
-                children: [
-                  SizedBox(height: 20),
-                  Container(
-                    width: 100,
-                    height: 100,
-                    child: CircularProgressIndicator(),
-                  )
-                ],
-              ),
-            );
-          },
+        body: GestureDetector(
+          onTap: () { setState(() { loginActive = !loginActive;}); },
+          child: Center(
+            child:
+            AnimatedContainer(
+                width: loginActive ? 350.0 : 300.0,
+                height: loginActive ? 360.0 : 100.0,
+                color: loginActive ? Colors.indigo[300]: Colors.black,
+                alignment: loginActive ? Alignment.center : AlignmentDirectional.topCenter,
+                duration: const Duration(seconds: 1),
+                curve: Curves.fastOutSlowIn,
+                child: loginActive ? Wrap(
+                  direction: Axis.vertical,
+                  spacing: 20,
+                  children: [
+                    Text("User", style: GoogleFonts.abel(fontSize: 25, color: Colors.white)),
+                    SizedBox(
+                      width: 250,
+                      child:
+                      TextField(
+                        controller: nameInput_ctrl,
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                          labelText: "Ingresa el usuario",
+                          border: OutlineInputBorder(),
+                        ),
+                        cursorColor: Colors.white,
+                      ),
+                    ),
+                    Text("Password", style: GoogleFonts.abel(fontSize: 25, color: Colors.white)),
+                    SizedBox(
+                      width: 250,
+                      child:
+                      TextField(
+                        obscureText: true,
+                        enableSuggestions: false,
+                        autocorrect: false,
+                        controller: pwdInput_ctrl,
+                        style: TextStyle(color: Colors.white),
+                        decoration: InputDecoration(
+                            labelText: "Ingresa la contraseña",
+                            border: OutlineInputBorder()
+                        ),
+                        cursorColor: Colors.white,
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        primary: Colors.white, //<-- SEE HERE
+                      ),
+                      child: Text("Ingresar"),
+                      onPressed: () {
+                        // AUTH PROCESS
+                        String user = nameInput_ctrl.text;
+                        String pwd = pwdInput_ctrl.text;
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HomePage(USER_KEY: "UserKey1")),
+                        );
+                      } , //
+                    )
+                  ],
+                ) : PreviewLogin
+            ),
+          ),
         )
     );
   }
@@ -170,11 +129,5 @@ class _LogInPageState extends State<LogInPage> {
     pwdInput_ctrl.text = "";
   }
 
-  Future<QuerySnapshot> getData() async {
-    await Firebase.initializeApp();
-    return await FirebaseFirestore.instance
-        .collection("Log In")
-        .get();
-  }
 
 }

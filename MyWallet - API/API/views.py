@@ -1,5 +1,5 @@
 from django.http import JsonResponse, HttpResponse
-from API.scripts.firestore import LoginAuth, home_view_data
+from API.scripts.firestore import LoginAuth, home_view
 
 # Create your views here.
 
@@ -11,5 +11,5 @@ def log_in (request, user, psw):
     return JsonResponse(resp)
 
 def home_view_data (request, user_key):
-    resp = home_view_data(user_key)
-    return JsonResponse({"a": "b"})
+    resp = home_view (user_key)
+    return JsonResponse(resp)

@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-
 import 'package:google_fonts/google_fonts.dart';
 import 'package:slimy_card/slimy_card.dart';
 import 'package:pie_chart/pie_chart.dart';
 
-import 'package:mywallet/models/user.dart';
-import "utils.dart";
-
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.USER_KEY, required this.NAME}) : super(key: key);
+  const HomePage({Key? key, required this.USER_KEY}) : super(key: key);
   final String USER_KEY;
-  final String NAME;
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -25,57 +17,24 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  // Inicializo USER como vacio
-  User USER = new User();
-
-  // PIE CHART
-  final colorList = <Color>[
-    Colors.greenAccent,
-    Colors.white
-  ];
+  final NAME = "Sebastian";
 
   final dataMap = <String, double>{
     "Flutter": 5,
     "Python": 10,
   };
 
+  final List<String> images = ["Me", "You", "Foo", "Baa"];
+  final PageController controller = PageController(viewportFraction:0.8);
+
   @override
   Widget build(BuildContext context) {
-
-    CollectionReference MPU = FirebaseFirestore.instance.collection('MovimientosPorUsuario');
-
     return Scaffold(
         appBar: AppBar(
           title: Text("My Wallet - Home"),
         ),
-        body: FutureBuilder<DocumentSnapshot>(
-          future: MPU.doc("UserKey1").collection("MisDatos").doc("Categorias").get(),
-          builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              Map<String, double> data = snapshot.data!.data() as Map<String, double>;
-              USER.name = widget.NAME;
-              USER.key = widget.USER_KEY;
-              USER.load_data(data);
-              return BUILD_HOME_FOR_USER ();
-            }
-            else if (snapshot.connectionState == ConnectionState.none) {
-              return Text("No data");
-            }
-            return Center(
-              child:
-              Column(
-                children: [
-                  SizedBox(height: 20),
-                  Container(
-                    width: 100,
-                    height: 100,
-                    child: CircularProgressIndicator(),
-                  )
-                ],
-              ),
-            );
-          },
-        )
+        body:
+          BUILD_HOME_FOR_USER ()
     );
   }
 
@@ -94,7 +53,7 @@ class _HomePageState extends State<HomePage> {
               child:
               Column(
                 children: [
-                  Text("Bienvenido, ${USER.name}", style: GoogleFonts.bentham(fontSize: 30)),
+                  Text("Bienvenido, ${NAME}", style: GoogleFonts.bentham(fontSize: 30)),
                 ],
               )
             ),
@@ -104,9 +63,32 @@ class _HomePageState extends State<HomePage> {
               topCardWidget: topCardWidget(),
               bottomCardWidget: bottomCardWidget(),
             ),
+            SizedBox(height: 20),
           ],
         );
       }),
+    );
+  }
+
+  Widget topCardWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        PieChart(
+          dataMap: dataMap,
+          chartType: ChartType.ring,
+          baseChartColor: Colors.grey[50]!.withOpacity(0.15),
+          chartValuesOptions: const ChartValuesOptions(
+            showChartValuesInPercentage: true,
+          ),
+        ),
+        SizedBox(height: 20),
+        Text(
+          'Egresos',
+          style: TextStyle(color: Colors.white, fontSize: 18),
+        ),
+        SizedBox(height: 10),
+      ],
     );
   }
 
@@ -125,12 +107,10 @@ class _HomePageState extends State<HomePage> {
         SizedBox(height: 15),
         Expanded(
           child: Text(
-            'FlutterDevs specializes in creating cost-effective and efficient '
-                'applications with our perfectly crafted,creative and leading-edge '
-                'flutter app development solutions for customers all around the globe.',
+            'Este grafico representa tus egresos entre el periodo X - Y.',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 12,
+              fontSize: 18,
               fontWeight: FontWeight.w500,
             ),
             textAlign: TextAlign.center,
@@ -140,27 +120,21 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget topCardWidget() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        PieChart(
-          dataMap: USER.spent_map,
-          chartType: ChartType.ring,
-          baseChartColor: Colors.grey[50]!.withOpacity(0.15),
-          colorList: colorList,
-          chartValuesOptions: const ChartValuesOptions(
-            showChartValuesInPercentage: true,
-          ),
-          totalValue: 20,
-        ),
-        SizedBox(height: 20),
-        Text(
-          'Egresos',
-          style: TextStyle(color: Colors.white, fontSize: 20),
-        ),
-        SizedBox(height: 10),
-      ],
+  List<Widget> BUILD_BANK_CARDS (){
+    Card c = Card(child: Text("a"));
+    return [c, c, c];
+  }
+
+  Widget CardMovie () {
+    return Card(
+        shadowColor: Theme.of(context).accentColor,
+        elevation: 5,
+        child:
+        Column(
+          children: [
+            Text("Movie", style: GoogleFonts.bentham(fontSize: 10)),
+          ],
+        )
     );
   }
 
