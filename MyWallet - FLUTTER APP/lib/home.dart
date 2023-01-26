@@ -34,9 +34,9 @@ class _HomePageState extends State<HomePage> {
   };
   final List<String> CUENTAS = ["BBVA DEBITO", "BBVA CREDITO", "EFECTIVO", "MERCADO PAGO"];
   String cuentaElegida = "BBVA DEBITO";
-
   final List<String> CONCEPTOS = ["Futbol", "Gimnasio", "Joda", "Ropa"];
   String conceptoElegido = "Futbol";
+  String USER_PICTURE_URL = "https://avatars.githubusercontent.com/u/69599597?v=4";
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +235,11 @@ class _HomePageState extends State<HomePage> {
       child:
       Row (
         children: [
-          Column(),
+          Column(
+            children: [
+              Image.network(USER_PICTURE_URL, width: 100, height: 100)
+            ],
+          ),
           Column()
         ],
       ),
