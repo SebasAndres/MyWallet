@@ -114,7 +114,7 @@ class _LogInPageState extends State<LogInPage> {
                         String pwd = pwdInput_ctrl.text;
 
                         // String url = "http://localhost:8000/logIn/sebas/123";
-                        final response = await http.get(new Uri.http("127.0.0.1:8000"));
+                        final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));
                         var responseData = json.decode(response.body);
                         print (responseData);
 
