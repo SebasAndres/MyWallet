@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:mywallet/home.dart';
+import 'LoginResponse.dart';
 import "utils.dart";
 
 import 'dart:convert';
@@ -113,14 +114,9 @@ class _LogInPageState extends State<LogInPage> {
                         String user = nameInput_ctrl.text;
                         String pwd = pwdInput_ctrl.text;
 
-                        // String url = "http://localhost:8000/logIn/sebas/123";
-                        final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));
-                        var responseData = json.decode(response.body);
-                        print (responseData);
-
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage(USER_KEY: "UserKey1")),
+                          MaterialPageRoute(builder: (context) => LoginResponse(USER: user, PWD: pwd)),
                         );
                       } , //
                     )
