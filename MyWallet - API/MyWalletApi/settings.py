@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["sebasandres.pythonanywhere.com"] # por defecto era []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -54,10 +53,8 @@ MIDDLEWARE = [
 ]
 
 ## 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8000',
-    'http://sebasandres.pythonanywhere.com/',
-]
+CORS_ALLOW_ALL_ORIGINS = True 
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'MyWalletApi.urls'
 

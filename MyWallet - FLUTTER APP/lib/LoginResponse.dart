@@ -42,7 +42,7 @@ class _LogInResponseState extends State<LoginResponse> {
           future: log_response,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Text(snapshot.data!["id"].toString());
+              return Text(snapshot.data!.toString());
             } else if (snapshot.hasError) {
               return Text('${snapshot.error}');
             }
