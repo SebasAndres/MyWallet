@@ -51,7 +51,7 @@ class _LogInPageState extends State<LogInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("My Wallet - Log In"),
+          title: Text("My Wallet 💵"),
         ),
         body: GestureDetector(
           onTap: () { setState(() { loginActive = !loginActive;}); },
