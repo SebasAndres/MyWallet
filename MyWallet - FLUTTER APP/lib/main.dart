@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:mywallet/home.dart';
-import 'LoginResponse.dart';
 import "utils.dart";
-
 import 'dart:convert';
 import "models/Endpoints.dart";
 import 'package:http/http.dart' as http;
@@ -38,12 +36,13 @@ class _LogInPageState extends State<LogInPage> {
     super.initState();
   }
 
+  // SEVER COM
+  final my_endpoints = Endpoints();
+
   // PAGE CONFIGS
   bool loginActive = false;
-  // INPUT CONTROLLERS
   final nameInput_ctrl = TextEditingController();
   final pwdInput_ctrl = TextEditingController();
-
   Center PreviewLogin = Center(
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -110,14 +109,24 @@ class _LogInPageState extends State<LogInPage> {
                       ),
                       child: Text("Ingresar"),
                       onPressed: () async {
-                        // AUTH PROCESS
+                        // AUTENTICACION
                         String user = nameInput_ctrl.text;
                         String pwd = pwdInput_ctrl.text;
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginResponse(USER: user, PWD: pwd)),
-                        );
+                        if (user.isNotEmpty && pwd.isNotEmpty){
+                          var server_resp = await http.get(my_endpoints.log_in(user, pwd));
+                          var data = jsonDecode(server_resp.body);
+                          if (data["auth"]){
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(USER_KEY: data["user_key"])));
+                          }
+                          else {
+                            errorLogIn(context);
+                          }
+                        }
+                        else {
+                          showAlertDialog(context, "Te falta completar campos!");
+                        }
+
                       } , //
                     )
                   ],
