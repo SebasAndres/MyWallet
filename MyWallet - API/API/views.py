@@ -42,6 +42,6 @@ def spend_money (request, user, psw, acc, value, det, cat, cuotes, interest):
     resp = move_money(user, psw, ops)
     return JsonResponse(resp)
 
-def get_account (request, user_key, account):
-    acc_data = read_account (user_key, account)
+def get_account (request, user_key, acc):
+    acc_data = read_account (user_key, acc)
     return JsonResponse(acc_data)

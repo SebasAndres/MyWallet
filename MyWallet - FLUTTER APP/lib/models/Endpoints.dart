@@ -14,7 +14,7 @@ class Endpoints {
       return Uri.parse('http://sebasandres.pythonanywhere.com/add_money/'+user+"/"+pwd+"/"+cuenta+"/"+monto.toString()+"/"+detalle+"/"+concepto);
     }
     else {
-      return Uri.parse('http://sebasandres.pythonanywhere.com/spend_money/'+user+"/"+pwd+"/"+cuenta+"/"+monto.toString()+"/"+detalle+"/"+concepto);
+      return Uri.parse('http://sebasandres.pythonanywhere.com/spend_money/'+user+"/"+pwd+"/"+cuenta+"/"+(-monto).toString()+"/"+detalle+"/"+concepto);
     }
   }
 

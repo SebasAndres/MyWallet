@@ -227,10 +227,9 @@ class _HomePageState extends State<HomePage> {
                                     String concepto = conceptoElegido;
                                     String detalle = DetalleText.text;
                                     double monto = double.parse(MontoText.text);
-                                    if (detalle.isEmpty) {
-                                      detalle = "_";
-                                    }
+                                    if (detalle.isEmpty) { detalle = "_"; }
                                     var server_resp = await http.get(my_endpoints.transferir_1c(curr_usr.nombre, curr_usr.psw, cuenta, concepto, detalle, monto));
+                                    print (my_endpoints.transferir_1c(curr_usr.nombre, curr_usr.psw, cuenta, concepto, detalle, monto));
                                     var data = jsonDecode(server_resp.body);
                                     if (data["status"] == "OK"){
                                       showAlertDialog(context, "Se realizo la transferencia!\n"+data["info"]);
