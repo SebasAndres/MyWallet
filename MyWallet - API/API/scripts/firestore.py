@@ -29,7 +29,7 @@ def home_view (user_key):
     user_data_log = LogInReference.document(user_key).get().to_dict()
     name = user_data_log["User"]
     pic_url = user_data_log["Pic"]
-    date_last_op = user_data_log["ult. op"]
+    date_last_op = user_data_log["ult_op"]
     pie_chart_categories = user_coll.collection(u"MisDatos").document(u"Categorias").get().to_dict()
     user_accounts = list ()
     for acc in user_coll.collection(u"Cuentas").stream():
@@ -84,7 +84,7 @@ def move_money (user, psw, ops):
                 # registro en categorias
                 register_in_category (user_key, ops.value, ops.category)
                 # update last op date
-                LogInReference.document(user_key).update({"ult. op": datetime.datetime.today()})
+                LogInReference.document(user_key).update({"ult_op": updt_time})
                 # leo la fecha de vencimiento de la tarjeta asociada a acc
                 venc = MPU_Reference.document(user_key).collection(u"Cuentas").document(ops.acc).get().to_dict()["Vencimiento"]
                 venc = str(venc)[:19]
@@ -112,7 +112,7 @@ def move_money (user, psw, ops):
                 # registrar en categorias
                 register_in_category (user_key, ops.value, ops.category)
                 # update last op date
-                LogInReference.document(user_key).set({"ult. op": datetime.datetime.today()})
+                LogInReference.document(user_key).update({"ult_op": updt_time})
                 return {
                     "status": "OK",
                     "info": f"Se actualizo el saldo de la cuenta {ops.acc}",
