@@ -41,9 +41,11 @@ def home_view (user_key):
         "foto": pic_url
     }
 
+def read_account (user_key, acc):
+    return MPU_Reference.document(user_key).collection(u"Cuentas").document(acc).get().to_dict()
 
 def discount_from_account (user_key, acc, value):
-    acc_curr = MPU_Reference.document(user_key).collection(u"Cuentas").document(acc).get().to_dict()
+    acc_curr = read_account(user_key, acc)
     acc_curr["Saldo"] += float(value)
     MPU_Reference.document(user_key).collection(u"Cuentas").document(acc).set(acc_curr);
 
@@ -52,6 +54,11 @@ def registerOps (user_key, ops):
 
 def registerToPay (user_key, topay):
     return MPU_Reference.document(user_key).collection(u"ToPay").add(topay.to_dict());
+
+def register_in_category (user_key, value, category):
+    cat_curr = MPU_Reference.document(user_key).collection(u"MisDatos").document(u"Categorias").get().to_dict()
+    cat_curr[category] += value
+    MPU_Reference.document(user_key).collection(u"MisDatos").document(u"Categorias").set(cat_curr);
 
 def move_money (user, psw, ops):
     """
@@ -71,6 +78,8 @@ def move_money (user, psw, ops):
                 ops.value = cuota 
                 discount_from_account(user_key, ops.acc, cuota)
                 updt_time, ops_ref = registerOps(user_key, ops)
+                # registro en categorias
+                register_in_category (user_key, ops.value, ops.category)
                 # leo la fecha de vencimiento de la tarjeta asociada a acc
                 venc = MPU_Reference.document(user_key).collection(u"Cuentas").document(ops.acc).get().to_dict()["Vencimiento"]
                 venc = str(venc)[:19]
@@ -86,7 +95,7 @@ def move_money (user, psw, ops):
                     
                 return {
                     "status": "OK",
-                    "info": f"Se actualizo el saldo de la cuenta {ops.acc}",
+                    "info": f"Se actualizo el saldo de la cuenta {ops.acc}, en concepto de {ops.category}",
                     "OPS_ID": ops_ref.id,
                     "time": updt_time,
                     "TO_PAYS": topays_ref
@@ -96,6 +105,8 @@ def move_money (user, psw, ops):
                 discount_from_account (user_key, ops.acc, ops.value)
                 # agregar a ops 
                 updt_time, ops_ref = registerOps (user_key, ops)
+                # registrar en categorias
+                register_in_category (user_key, ops.value, ops.category)
 
                 return {
                     "status": "OK",

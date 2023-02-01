@@ -6,9 +6,11 @@ class User {
   late List<String> categorias;
   late List<String> cuentas;
   late String foto;
+  late String psw;
 
   User (Map<String, dynamic> snapshot) {
     this.nombre = snapshot["nombre"];
+    this.psw = snapshot["psw"];
     Map<String,dynamic> temp_cats = Map.from(snapshot["pie_chart"]);
     for (String key in temp_cats.keys){
       categorias_map[key] = double.parse(temp_cats[key].toString());

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mywallet/models/photo_heroe.dart';
+import 'package:mywallet/utils.dart';
 import 'package:slimy_card/slimy_card.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'models/Account.dart';
 import "models/Endpoints.dart";
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -39,23 +41,27 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<Map<String, dynamic>> read_selected_account (String acc) async {
+    final response = await http.get(my_endpoints.get_account(USER_KEY, acc));
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load');
+    }
+  }
+
   // CONFIG VIEWS
   TextStyle HOME_FONT_STYLE = GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 25);
   TextStyle HOME_FONT_STYLE_DARK = GoogleFonts.cabinCondensed (color: Colors.black, fontSize: 20);
   TextStyle HOME_TITLE_FONT = GoogleFonts.bentham (fontSize: 30, color: Colors.white);
   SizedBox SPACE = SizedBox (height: 15);
   bool showAccounts = false;
-
-  // SAMPLE DATA
-  final NAME = "Sebastian";
-  final dataMap = <String, double>{
-    "Flutter": 5,
-    "Python": 10,
-  };
   String cuentaElegida = "Efectivo";
-  final List<String> CONCEPTOS = ["Futbol", "Gimnasio", "Joda", "Ropa"];
   String conceptoElegido = "Comida";
-  String USER_PICTURE_URL = "https://avatars.githubusercontent.com/u/69599597?v=4";
+  TextEditingController DetalleText = TextEditingController();
+  TextEditingController MontoText = TextEditingController();
+  double PROFILE_ROW_SPACE_WIDTH = 25;
+  double PROFILE_ROW_SPACE_HEIGHT = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -69,9 +75,7 @@ class _HomePageState extends State<HomePage> {
           future: server_response_user,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-
               User curr_usr = new User (snapshot.data!);
-
               return  StreamBuilder(
                 initialData: false,
                 stream: slimyCard.stream,
@@ -123,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                           )
                       ),
                       SizedBox(
-                        height: 400,
+                        height: 410,
                         child: Card(
                             color: Colors.indigo[300],
                             child: Column(
@@ -166,6 +170,7 @@ class _HomePageState extends State<HomePage> {
                                         labelText: "Ingresa el monto",
                                         border: OutlineInputBorder()
                                     ),
+                                    controller: MontoText,
                                     cursorColor: Colors.white,
                                   ),
                                 ),
@@ -207,15 +212,34 @@ class _HomePageState extends State<HomePage> {
                                         border: OutlineInputBorder()
                                     ),
                                     cursorColor: Colors.white,
+                                    controller: DetalleText,
                                   ),
                                 ),
+                                SizedBox(height:10),
                                 ElevatedButton(
                                   style: OutlinedButton.styleFrom(
                                     backgroundColor: Colors.black,
                                     primary: Colors.white, //<-- SEE HERE
                                   ),
                                   child: Text("Transferir"),
-                                  onPressed: () {} , //
+                                  onPressed: () async {
+                                    String cuenta = cuentaElegida;
+                                    String concepto = conceptoElegido;
+                                    String detalle = DetalleText.text;
+                                    double monto = double.parse(MontoText.text);
+                                    if (detalle.isEmpty) {
+                                      detalle = "_";
+                                    }
+                                    var server_resp = await http.get(my_endpoints.transferir_1c(curr_usr.nombre, curr_usr.psw, cuenta, concepto, detalle, monto));
+                                    var data = jsonDecode(server_resp.body);
+                                    if (data["status"] == "OK"){
+                                      showAlertDialog(context, "Se realizo la transferencia!\n"+data["info"]);
+                                    }
+                                    else { 
+                                      showAlertDialog(context, "Error! No se realizo la transferencia. ");
+                                    }
+                                    setState(() {});
+                                  } , //
                                 )
                               ],
                             )
@@ -256,7 +280,6 @@ class _HomePageState extends State<HomePage> {
             else if (snapshot.hasError) {
               return Text('${snapshot.error}');
             }
-            // By default, show a loading spinner.
             return const CircularProgressIndicator();
           },
         )
@@ -265,48 +288,75 @@ class _HomePageState extends State<HomePage> {
 
   Widget topCardWidget (User usr) {
     return Container(
-      color: Colors.white,
+      color: Colors.indigo[300],
       child:
       Row (
         children: [
           Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container (
-                color: Colors.black,
-                child:
-                  Image.network(usr.foto, width: 200, height: 200)
-              )
+              CircleAvatar(
+                radius: 70, // Image radius
+                backgroundImage: NetworkImage(usr.foto),
+              ),
             ],
           ),
-          Column()
+          SizedBox(width:PROFILE_ROW_SPACE_WIDTH),
+          Column(
+            children: [
+              SizedBox(height:PROFILE_ROW_SPACE_HEIGHT*1.2),
+              Text("Hola "+ usr.nombre + "!👋🧉", style: HOME_FONT_STYLE, overflow: TextOverflow.ellipsis),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children:[
+                  SizedBox(height:PROFILE_ROW_SPACE_HEIGHT),
+                  Text("Tu nivel de gasto está NORMAL 😃", style:GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 14)),
+                  SizedBox(height:PROFILE_ROW_SPACE_HEIGHT/2),
+                  Text("0 Notificaciones pendientes.", style:GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 14)),
+                  SizedBox(height:PROFILE_ROW_SPACE_HEIGHT/2),
+                  Text("ult. operación: 31/01/23 16:30", style:GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 14)),
+                  SizedBox(height:PROFILE_ROW_SPACE_HEIGHT),
+                  ElevatedButton(
+                    onPressed: (){},
+                    child: Text("Ver perfil"),
+                  )
+                ]
+              )
+            ],
+          )
         ],
       ),
     );
   }
 
   Widget bottomCardWidget (User user) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text("Egresos", style: HOME_FONT_STYLE),
-        PieChart(
-          dataMap: user.EgresosMap(),
-          chartType: ChartType.ring,
-          baseChartColor: Colors.indigo[200]!,
-          animationDuration: const Duration(milliseconds: 800),
-          chartValuesOptions: const ChartValuesOptions(
-            showChartValuesInPercentage: true,
-          ),
-          legendOptions: LegendOptions(
-            legendTextStyle: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white
+    Map<String, double> usr_egresos_map = user.EgresosMap();
+    if (usr_egresos_map.isNotEmpty) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text("Egresos", style: HOME_FONT_STYLE),
+          PieChart(
+            dataMap: usr_egresos_map,
+            chartType: ChartType.ring,
+            baseChartColor: Colors.indigo[200]!,
+            animationDuration: const Duration(milliseconds: 800),
+            chartValuesOptions: const ChartValuesOptions(
+              showChartValuesInPercentage: true,
+            ),
+            legendOptions: LegendOptions(
+              legendTextStyle: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white
+              ),
             ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    }
+    else {
+      return Text("Todavia no tenés ningun gasto! ", style: HOME_FONT_STYLE);
+    }
+
   }
 
   Widget showAc (User user){
@@ -331,22 +381,23 @@ class _HomePageState extends State<HomePage> {
             Navigator.of(context).push(MaterialPageRoute<void>(
               builder: (BuildContext context) {
                 return Scaffold(
-                appBar: AppBar(
+                  appBar: AppBar(
                   title: Text(c),
                 ),
-                body: Container(
-                  // The blue background emphasizes that it's a new route.
-                  color: Colors.lightBlueAccent,
-                  padding: const EdgeInsets.all(16.0),
-                  alignment: Alignment.topLeft,
-                  child: PhotoHero(
-                    photo: 'assets/img/icon.png',
-                    descr: c,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ),
+                body:
+                  FutureBuilder<Map<String, dynamic>>(
+                    future: read_selected_account(c),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        Account m_account = new Account (snapshot.data!);
+                        return PRINT_ACCOUNT_CARD(m_account);
+                      }
+                      else if (snapshot.hasError) {
+                        return Text('${snapshot.error}');
+                      }
+                      return const CircularProgressIndicator();
+                    }
+                  )
               );
               }
             ));
@@ -356,6 +407,20 @@ class _HomePageState extends State<HomePage> {
       banks_widget_list.add(SizedBox(height:10));
     }
     return banks_widget_list;
+  }
+
+  Widget PRINT_ACCOUNT_CARD (Account acc) {
+    return Column(
+      children: [
+        PhotoHero(
+          photo: 'assets/img/icon.png',
+          descr: acc.nombre,
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
   }
 
 }

@@ -1,3 +1,5 @@
 from django.test import TestCase
+from scripts.firestore import register_in_category
 
-# Create your tests here.
+# TESTS
+register_in_category("UserKey1", -100, "Comida")

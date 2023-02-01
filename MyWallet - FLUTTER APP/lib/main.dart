@@ -112,7 +112,6 @@ class _LogInPageState extends State<LogInPage> {
                         // AUTENTICACION
                         String user = nameInput_ctrl.text;
                         String pwd = pwdInput_ctrl.text;
-
                         if (user.isNotEmpty && pwd.isNotEmpty){
                           var server_resp = await http.get(my_endpoints.log_in(user, pwd));
                           var data = jsonDecode(server_resp.body);
@@ -127,7 +126,7 @@ class _LogInPageState extends State<LogInPage> {
                           showAlertDialog(context, "Te falta completar campos!");
                         }
 
-                      } , //
+                      }
                     )
                   ],
                 ) : PreviewLogin
