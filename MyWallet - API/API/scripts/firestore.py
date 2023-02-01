@@ -84,7 +84,7 @@ def move_money (user, psw, ops):
                 # registro en categorias
                 register_in_category (user_key, ops.value, ops.category)
                 # update last op date
-                LogInReference.document(user_key).set({"ult. op": datetime.datetime.today()})
+                LogInReference.document(user_key).update({"ult. op": datetime.datetime.today()})
                 # leo la fecha de vencimiento de la tarjeta asociada a acc
                 venc = MPU_Reference.document(user_key).collection(u"Cuentas").document(ops.acc).get().to_dict()["Vencimiento"]
                 venc = str(venc)[:19]
