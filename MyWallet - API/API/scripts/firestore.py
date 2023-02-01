@@ -40,7 +40,7 @@ def home_view (user_key):
         "pie_chart": pie_chart_categories,
         "cuentas": user_accounts,
         "foto": pic_url,
-        "ult-op": date_last_op,
+        "ult_op": date_last_op,
         "nivel_gasto": "NORMAL 😃"
     }
 

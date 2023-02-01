@@ -229,7 +229,6 @@ class _HomePageState extends State<HomePage> {
                                     double monto = double.parse(MontoText.text);
                                     if (detalle.isEmpty) { detalle = "_"; }
                                     var server_resp = await http.get(my_endpoints.transferir_1c(curr_usr.nombre, curr_usr.psw, cuenta, concepto, detalle, monto));
-                                    print (my_endpoints.transferir_1c(curr_usr.nombre, curr_usr.psw, cuenta, concepto, detalle, monto));
                                     var data = jsonDecode(server_resp.body);
                                     if (data["status"] == "OK"){
                                       showAlertDialog(context, "Se realizo la transferencia!\n"+data["info"]);
@@ -308,7 +307,7 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children:[
                   SizedBox(height:PROFILE_ROW_SPACE_HEIGHT),
-                  Text("Tu nivel de gasto está NORMAL 😃", style:GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 14)),
+                  Text("Tu nivel de gasto está "+usr.nivel_gasto, style:GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 14)),
                   SizedBox(height:PROFILE_ROW_SPACE_HEIGHT/2),
                   Text("0 Notificaciones pendientes.", style:GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 14)),
                   SizedBox(height:PROFILE_ROW_SPACE_HEIGHT/2),
