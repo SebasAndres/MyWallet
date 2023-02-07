@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
     // timeDilation = 1.0;
     return Scaffold(
         appBar: AppBar(
-          title: Text("MyWallet - Home 💵"),
+          title: Text("MaTeo - Home 💵"),
         ),
         body:
         FutureBuilder<Map<String, dynamic>>(
@@ -311,7 +311,7 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(height:PROFILE_ROW_SPACE_HEIGHT/2),
                   Text("0 Notificaciones pendientes.", style:GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 14)),
                   SizedBox(height:PROFILE_ROW_SPACE_HEIGHT/2),
-                  Text("ult. operación: 31/01/23 16:30", style:GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 14)),
+                  Text("ult. operación: "+usr.ult_op, style:GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 14)), // 31/01/23 16:30
                   SizedBox(height:PROFILE_ROW_SPACE_HEIGHT),
                   ElevatedButton(
                     onPressed: (){},
@@ -387,7 +387,7 @@ class _HomePageState extends State<HomePage> {
                     future: read_selected_account(c),
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        Account m_account = new Account (snapshot.data!);
+                        Account m_account = Account (snapshot.data!, c);
                         return PRINT_ACCOUNT_CARD(m_account);
                       }
                       else if (snapshot.hasError) {
@@ -417,6 +417,10 @@ class _HomePageState extends State<HomePage> {
             Navigator.of(context).pop();
           },
         ),
+        Text("Tipo: " + acc.tipo),
+        Text("Saldo: " + acc.saldo.toString()),
+        Text("Cierre: " + acc.cierre),
+        Text("Vencimiento: " + acc.vencimiento)
       ],
     );
   }

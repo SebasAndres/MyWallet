@@ -8,14 +8,18 @@ class Account {
   late String cierre;
   late String vencimiento;
 
-  Account (Map<String, dynamic> snapshot) {
-    this.nombre = snapshot["nombre"];
-    this.saldo = double.parse(snapshot["Saldo"]);
+  Account (Map<String, dynamic> snapshot, String nombre) {
+    this.nombre = nombre;
+    this.saldo = double.parse(snapshot["Saldo"].toString());
     this.tipo = snapshot["tipo"];
 
     if (this.tipo == "credito") {
-      this.cierre = snapshot["Ciere"];
+      this.cierre = snapshot["Cierre"];
       this.vencimiento = snapshot["Vencimiento"];
+    }
+    else {
+      this.cierre = "--";
+      this.vencimiento = "--";
     }
   }
 

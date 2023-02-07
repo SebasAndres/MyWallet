@@ -1,4 +1,5 @@
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
 
@@ -15,7 +16,11 @@ class User {
     this.nombre = snapshot["nombre"];
     this.psw = snapshot["psw"];
     this.nivel_gasto = snapshot["nivel_gasto"];
-    this.ult_op = timeago.format(snapshot["ult_opt"].toDate());
+
+    DateTime date = DateTime.parse(snapshot["ult_op"].toString());
+    Timestamp timestamp_ult_op = Timestamp.fromDate(date);
+    this.ult_op = timeago.format(timestamp_ult_op.toDate());
+
     Map<String,dynamic> temp_cats = Map.from(snapshot["pie_chart"]);
     for (String key in temp_cats.keys){
       categorias_map[key] = double.parse(temp_cats[key].toString());

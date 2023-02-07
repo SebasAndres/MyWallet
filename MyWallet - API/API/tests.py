@@ -1,5 +1,16 @@
 from django.test import TestCase
-from scripts.firestore import register_in_category
+import datetime 
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+from dateutil.relativedelta import relativedelta
+from models import OPS, ToPay
 
-# TESTS
-read_account ("UserKey1", "Efectivo")
+# Use a service account.
+cred = credentials.Certificate('scripts/firestore_key.json')
+app = firebase_admin.initialize_app(cred)
+db = firestore.client()
+
+LogInReference = db.collection(u"Log In")
+MPU_Reference = db.collection(u"MovimientosPorUsuario")
+

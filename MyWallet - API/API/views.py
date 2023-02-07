@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
-from API.scripts.firestore import LoginAuth, home_view, move_money, read_account
+from API.scripts.firestore import LoginAuth, home_view, move_money, \
+                                  read_account
 from API.models import OPS
 import datetime
 # Create your views here.
@@ -43,5 +44,9 @@ def spend_money (request, user, psw, acc, value, det, cat, cuotes, interest):
     return JsonResponse(resp)
 
 def get_account (request, user_key, acc):
-    acc_data = read_account (user_key, acc)
+    acc_data = read_account(user_key, acc)
     return JsonResponse(acc_data)
+
+def view_ops (request, user_key, psw):
+    user_ops = {} # read_ops_from_user(user_key, psw)
+    return JsonResponse(user_ops)

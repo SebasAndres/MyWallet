@@ -8,6 +8,8 @@ class OPS ():
         self.detail = detail
         self.date = date
         self.value = float(value)
+        self.id = str(self.date)[:19]
+        self.collection_ref = self.date_to_ref()
         # En caso de ser necesario, se agregan con el metodo posterior
         self.cuotes = 1
         self.interest = 0
@@ -15,6 +17,10 @@ class OPS ():
     def set_cuotes_interest (self, ncuotes, interest):
         self.cuotes = int(ncuotes)
         self.interest = float(interest)
+
+    def date_to_ref (self):
+        c_year = str(self.date.year)
+        return self.date.strftime("%b").lower()+"-"+''.join(c_year)
 
     def to_dict (self):
         if self.cuotes > 1:
@@ -35,23 +41,19 @@ class OPS ():
                 "Monto": self.value
             }           
 
-class ToPay ():
+class ToPay (OPS):
     def __init__ (self, category, detail, account, date_to_pay, cuote, cuote_i, n_cuotes):
-        self.cat = category
-        self.det = detail 
-        self.acc = account
-        self.date_to_pay = date_to_pay
-        self.cuote = cuote # valor de la cuota
+        super().__init__(category=category, acc=account, detail=detail, date=date_to_pay, value=cuote)
         self.cuote_i = cuote_i # numero de cuota a la que refiere
         self.n_cuotes = n_cuotes # cantidad de cuotas asociadas
-    
+
     def to_dict (self):
         return {
-            "Categoria": self.cat,
-            "Detalle": self.det,
+            "Categoria": self.category,
+            "Detalle": self.detail,
             "Cuenta": self.acc,
-            "Monto": self.cuote,
-            "Fecha Pago": self.date_to_pay,
+            "Monto": self.value,
+            "Fecha": self.date, # fecha de pago
             "nCuota": self.cuote_i,
             "cantCuotas": self.n_cuotes
         }
