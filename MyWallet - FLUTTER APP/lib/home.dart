@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:mywallet/models/photo_heroe.dart';
-import 'package:mywallet/utils.dart';
 import 'package:slimy_card/slimy_card.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:mywallet/utils.dart';
 import 'models/Account.dart';
 import "models/Endpoints.dart";
 import 'dart:convert';
@@ -12,16 +12,21 @@ import 'package:http/http.dart' as http;
 import 'models/User.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.USER_KEY}) : super(key: key);
+  const HomePage({Key? key, required this.USER_KEY,
+                  required this.curr_user_psw}) : super(key: key);
   final String USER_KEY;
+  final String curr_user_psw;
   @override
-  State<HomePage> createState() => _HomePageState(USER_KEY: USER_KEY);
+  State<HomePage> createState() => _HomePageState(USER_KEY: USER_KEY,
+                                       curr_user_psw: curr_user_psw);
 }
 
 class _HomePageState extends State<HomePage> {
 
   String USER_KEY;
-  _HomePageState({required this.USER_KEY});
+  String curr_user_psw;
+
+  _HomePageState({required this.USER_KEY, required this.curr_user_psw});
 
   late Future<Map<String, dynamic>> server_response_user;
   Endpoints my_endpoints = Endpoints();
@@ -52,10 +57,12 @@ class _HomePageState extends State<HomePage> {
 
   // CONFIG VIEWS
   TextStyle HOME_FONT_STYLE = GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 25);
+  TextStyle HOME_FONT_STYLE_SWITCH = GoogleFonts.cabinCondensed (color: Colors.white, fontSize: 18);
   TextStyle HOME_FONT_STYLE_DARK = GoogleFonts.cabinCondensed (color: Colors.black, fontSize: 20);
   TextStyle HOME_TITLE_FONT = GoogleFonts.bentham (fontSize: 30, color: Colors.white);
   SizedBox SPACE = SizedBox (height: 15);
   bool showAccounts = false;
+  bool es_ingreso = false;
   String cuentaElegida = "Efectivo";
   String conceptoElegido = "Comida";
   TextEditingController DetalleText = TextEditingController();
@@ -127,7 +134,7 @@ class _HomePageState extends State<HomePage> {
                           )
                       ),
                       SizedBox(
-                        height: 410,
+                        height: 460,
                         child: Card(
                             color: Colors.indigo[300],
                             child: Column(
@@ -173,6 +180,21 @@ class _HomePageState extends State<HomePage> {
                                     controller: MontoText,
                                     cursorColor: Colors.white,
                                   ),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Switch(
+                                      activeColor: Colors.green,
+                                      activeTrackColor: Colors.green,
+                                      inactiveThumbColor: Colors.red,
+                                      inactiveTrackColor: Colors.red,
+                                      splashRadius: 50.0,
+                                      value: es_ingreso,
+                                      onChanged: (value) => setState(() => es_ingreso = value),
+                                    ),
+                                    Text(es_ingreso?"Ingreso":"Egreso", style: HOME_FONT_STYLE_SWITCH),
+                                  ],
                                 ),
                                 Text("Concepto", style: GoogleFonts.abel(fontSize: 25, color: Colors.white)),
                                 SizedBox(
@@ -223,20 +245,27 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   child: Text("Transferir"),
                                   onPressed: () async {
+
                                     String cuenta = cuentaElegida;
                                     String concepto = conceptoElegido;
                                     String detalle = DetalleText.text;
                                     double monto = double.parse(MontoText.text);
+
                                     if (detalle.isEmpty) { detalle = "_"; }
-                                    var server_resp = await http.get(my_endpoints.transferir_1c(curr_usr.nombre, curr_usr.psw, cuenta, concepto, detalle, monto));
+                                    var server_resp = await http.get(my_endpoints.transferir_1c(curr_usr.nombre,
+                                                                     curr_user_psw, cuenta, concepto, detalle, monto,
+                                                                     es_ingreso)
+                                                                    );
                                     var data = jsonDecode(server_resp.body);
+
                                     if (data["status"] == "OK"){
                                       showAlertDialog(context, "Se realizo la transferencia!\n"+data["info"]);
                                     }
-                                    else { 
+                                    else {
                                       showAlertDialog(context, "Error! No se realizo la transferencia. ");
                                     }
                                     setState(() {});
+
                                   } , //
                                 )
                               ],

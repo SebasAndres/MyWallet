@@ -8,13 +8,16 @@ class Endpoints {
     return Uri.parse('http://sebasandres.pythonanywhere.com/home/'+user_key);
   }
 
-  Uri transferir_1c (String user, String pwd, String cuenta, String concepto, String detalle, double monto) {
+  Uri transferir_1c (String user, String psw, String cuenta, String concepto,
+                     String detalle, double monto, bool esIngreso) {
     // Url para transferencia de unico pago
-    if (monto > 0) {
-      return Uri.parse('http://sebasandres.pythonanywhere.com/add_money/'+user+"/"+pwd+"/"+cuenta+"/"+monto.toString()+"/"+detalle+"/"+concepto);
+    if (esIngreso) {
+      return Uri.parse('http://sebasandres.pythonanywhere.com/add_money/'+user+"/"+psw+"/"+cuenta+
+                       "/"+monto.toString()+"/"+detalle+"/"+concepto);
     }
     else {
-      return Uri.parse('http://sebasandres.pythonanywhere.com/spend_money/'+user+"/"+pwd+"/"+cuenta+"/"+(-monto).toString()+"/"+detalle+"/"+concepto);
+      return Uri.parse('http://sebasandres.pythonanywhere.com/spend_money/'+user+"/"+psw+"/"+cuenta+
+                       "/"+monto.toString()+"/"+detalle+"/"+concepto);
     }
   }
 

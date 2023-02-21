@@ -3,7 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from dateutil.relativedelta import relativedelta
 
-from API.models import OPS, ToPay
+from API.models import ToPay
 import datetime
 
 # Use a service account.
@@ -47,6 +47,7 @@ def home_view (user_key):
         "nombre": user_data_log["User"],
         "pie_chart": pie_chart_categories_data,
         "cuentas": user_accounts,
+        "categorias": user_data_log["categorias"],
         "foto": user_data_log["Pic"],
         "ult_op": user_data_log["ult_op"],
         "nivel_gasto": "NORMAL 😃"
@@ -80,9 +81,11 @@ def registerOps (user_key, ops):
 
 def move_money (user, psw, ops):
     """
-    user: El usuario al cual se le realiza la transferencia
-    psw: La contraseña de ese usuario
-    ops: Objeto ops con datos necesarios
+    Registra OPS y ToPay, hace los movimientos entre las respectivas cuentas
+    Params:
+        user: El usuario al cual se le realiza la transferencia
+        psw: La contraseña de ese usuario
+        ops: Objeto ops con datos necesarios
     """
     # chequeo que sea el usuario mediante su psw
     auth_data = LoginAuth(user, psw)

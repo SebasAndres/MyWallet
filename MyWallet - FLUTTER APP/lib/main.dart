@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:mywallet/home.dart';
 import "utils.dart";
 import 'dart:convert';
@@ -116,7 +115,9 @@ class _LogInPageState extends State<LogInPage> {
                           var server_resp = await http.get(my_endpoints.log_in(user, pwd));
                           var data = jsonDecode(server_resp.body);
                           if (data["auth"]){
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(USER_KEY: data["user_key"])));
+                            Navigator.push(context, MaterialPageRoute(builder:
+                                (context) => HomePage(USER_KEY: data["user_key"], curr_user_psw: pwd)
+                            ));
                           }
                           else {
                             errorLogIn(context);
