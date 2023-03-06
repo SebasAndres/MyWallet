@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
   bool showAccounts = false;
   bool es_ingreso = false;
   String cuentaElegida = "Efectivo";
-  String conceptoElegido = "Comida";
+  String conceptoElegido = "delivery";
   TextEditingController DetalleText = TextEditingController();
   TextEditingController MontoText = TextEditingController();
   double PROFILE_ROW_SPACE_WIDTH = 25;
@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
     // timeDilation = 1.0;
     return Scaffold(
         appBar: AppBar(
-          title: Text("MaTeo - Home 💵"),
+          title: Text("MateO - Home 💵"),
         ),
         body:
         FutureBuilder<Map<String, dynamic>>(
@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.indigo[300],
                         width: 380,
                         topCardHeight: 250,
-                        bottomCardHeight: 285,
+                        bottomCardHeight: 300,
                         topCardWidget: topCardWidget(curr_usr),
                         bottomCardWidget: bottomCardWidget(curr_usr),
                       ),
@@ -245,26 +245,32 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   child: Text("Transferir"),
                                   onPressed: () async {
+                                    try {
+                                      String cuenta = cuentaElegida;
+                                      String concepto = conceptoElegido;
+                                      String detalle = DetalleText.text;
+                                      double monto = double.parse(MontoText.text);
 
-                                    String cuenta = cuentaElegida;
-                                    String concepto = conceptoElegido;
-                                    String detalle = DetalleText.text;
-                                    double monto = double.parse(MontoText.text);
+                                      if (detalle.isEmpty) { detalle = "_"; }
+                                      var server_resp = await http.get(my_endpoints.transferir_1c(curr_usr.nombre,
+                                          curr_user_psw, cuenta, concepto, detalle, monto,
+                                          es_ingreso)
+                                      );
+                                      var data = jsonDecode(server_resp.body);
 
-                                    if (detalle.isEmpty) { detalle = "_"; }
-                                    var server_resp = await http.get(my_endpoints.transferir_1c(curr_usr.nombre,
-                                                                     curr_user_psw, cuenta, concepto, detalle, monto,
-                                                                     es_ingreso)
-                                                                    );
-                                    var data = jsonDecode(server_resp.body);
-
-                                    if (data["status"] == "OK"){
-                                      showAlertDialog(context, "Se realizo la transferencia!\n"+data["info"]);
+                                      if (data["status"] == "OK"){
+                                        DetalleText.text = '';
+                                        MontoText.text = '';
+                                        showAlertDialog(context, "Se realizo la transferencia!\n"+data["info"]);
+                                      }
+                                      else {
+                                        showAlertDialog(context, "Error! No se realizo la transferencia. ");
+                                      }
+                                      setState(() {});
                                     }
-                                    else {
-                                      showAlertDialog(context, "Error! No se realizo la transferencia. ");
+                                    on FormatException catch (_) {
+                                      showAlertDialog(context, "Error! Ingresaste datos invalidos. ");
                                     }
-                                    setState(() {});
 
                                   } , //
                                 )

@@ -42,10 +42,13 @@ class _LogInPageState extends State<LogInPage> {
   bool loginActive = false;
   final nameInput_ctrl = TextEditingController();
   final pwdInput_ctrl = TextEditingController();
+
   Center PreviewLogin = Center(
     child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[ Text('Log In 🤙', style: TextStyle(fontSize: 20, color: Colors.white)) ],
+      children: <Widget>[
+        Text('Log In 🤙', style: TextStyle(fontSize: 20, color: Colors.white)),
+      ],
     ),
   );
 
@@ -53,85 +56,106 @@ class _LogInPageState extends State<LogInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("MaTeo 🧉💵"),
+          title: Text("MateO 🧉💵"),
         ),
         body: GestureDetector(
           onTap: () { setState(() { loginActive = !loginActive;}); },
           child: Center(
             child:
-            AnimatedContainer(
-                width: loginActive ? 350.0 : 300.0,
-                height: loginActive ? 360.0 : 100.0,
-                color: loginActive ? Colors.indigo[300]: Colors.black,
-                alignment: loginActive ? Alignment.center : AlignmentDirectional.topCenter,
-                duration: const Duration(seconds: 1),
-                curve: Curves.fastOutSlowIn,
-                child: loginActive ? Wrap(
-                  direction: Axis.vertical,
-                  spacing: 20,
-                  children: [
-                    Text("User", style: GoogleFonts.abel(fontSize: 25, color: Colors.white)),
-                    SizedBox(
-                      width: 250,
-                      child:
-                      TextField(
-                        controller: nameInput_ctrl,
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          labelText: "Ingresa el usuario",
-                          border: OutlineInputBorder(),
-                        ),
-                        cursorColor: Colors.white,
-                      ),
-                    ),
-                    Text("Password", style: GoogleFonts.abel(fontSize: 25, color: Colors.white)),
-                    SizedBox(
-                      width: 250,
-                      child:
-                      TextField(
-                        obscureText: true,
-                        enableSuggestions: false,
-                        autocorrect: false,
-                        controller: pwdInput_ctrl,
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                            labelText: "Ingresa la contraseña",
-                            border: OutlineInputBorder()
-                        ),
-                        cursorColor: Colors.white,
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        primary: Colors.white, //<-- SEE HERE
-                      ),
-                      child: Text("Ingresar"),
-                      onPressed: () async {
-                        // AUTENTICACION
-                        String user = nameInput_ctrl.text;
-                        String pwd = pwdInput_ctrl.text;
-                        if (user.isNotEmpty && pwd.isNotEmpty){
-                          var server_resp = await http.get(my_endpoints.log_in(user, pwd));
-                          var data = jsonDecode(server_resp.body);
-                          if (data["auth"]){
-                            Navigator.push(context, MaterialPageRoute(builder:
-                                (context) => HomePage(USER_KEY: data["user_key"], curr_user_psw: pwd)
-                            ));
-                          }
-                          else {
-                            errorLogIn(context);
-                          }
-                        }
-                        else {
-                          showAlertDialog(context, "Te falta completar campos!");
-                        }
+            Column(
+                children: [
+                  SizedBox(height:170),
+                  AnimatedContainer(
+                      width: loginActive ? 350.0 : 300.0,
+                      height: loginActive ? 360.0 : 100.0,
+                      color: loginActive ? Colors.indigo[300]: Colors.black,
+                      alignment: loginActive ? Alignment.center : AlignmentDirectional.topCenter,
+                      duration: const Duration(seconds: 1),
+                      curve: Curves.fastOutSlowIn,
+                      child: loginActive ? Wrap(
+                        direction: Axis.vertical,
+                        spacing: 20,
+                        children: [
+                          Text("User", style: GoogleFonts.abel(fontSize: 25, color: Colors.white)),
+                          SizedBox(
+                            width: 250,
+                            child:
+                            TextField(
+                              controller: nameInput_ctrl,
+                              style: TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                labelText: "Ingresa el usuario",
+                                border: OutlineInputBorder(),
+                              ),
+                              cursorColor: Colors.white,
+                            ),
+                          ),
+                          Text("Password", style: GoogleFonts.abel(fontSize: 25, color: Colors.white)),
+                          SizedBox(
+                            width: 250,
+                            child:
+                            TextField(
+                              obscureText: true,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                              controller: pwdInput_ctrl,
+                              style: TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                  labelText: "Ingresa la contraseña",
+                                  border: OutlineInputBorder()
+                              ),
+                              cursorColor: Colors.white,
+                            ),
+                          ),
+                          ElevatedButton(
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                primary: Colors.white, //<-- SEE HERE
+                              ),
+                              child: Text("Ingresar"),
+                              onPressed: () async {
+                                // AUTENTICACION
+                                String user = nameInput_ctrl.text;
+                                String pwd = pwdInput_ctrl.text;
+                                if (user.isNotEmpty && pwd.isNotEmpty){
+                                  var server_resp = await http.get(my_endpoints.log_in(user, pwd));
+                                  var data = jsonDecode(server_resp.body);
+                                  if (data["auth"]){
+                                    Navigator.push(context, MaterialPageRoute(
+                                        builder:
+                                            (context) => HomePage(USER_KEY: data["user_key"], curr_user_psw: pwd)
+                                            )
+                                    );
+                                  }
+                                  else {
+                                    errorLogIn(context);
+                                  }
+                                }
+                                else {
+                                  showAlertDialog(context, "Te falta completar campos!");
+                                }
 
-                      }
-                    )
-                  ],
-                ) : PreviewLogin
-            ),
+                              }
+                          )
+                        ],
+                      ) : PreviewLogin
+                  ),
+                  SizedBox(height:20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      /*
+                      Navigator.push(context, MaterialPageRoute(
+                          builder:
+                              (context) => RegisterPage()
+                          )
+                      );
+                      * */
+                    },
+                    icon: Icon(Icons.account_circle_outlined),
+                    label: Text('Registrarse'), // <-- Text
+                  ),
+                ]
+            )
           ),
         )
     );

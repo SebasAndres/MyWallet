@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from API.scripts.firestore import LoginAuth, home_view, move_money, \
-                                  read_account
-from API.models import OPS
+                                  read_account, register_new_user
+from API.models import OPS, User
 import datetime
 # Create your views here.
 
@@ -50,3 +50,12 @@ def get_account (request, user_key, acc):
 def view_ops (request, user_key, psw):
     user_ops = {} # read_ops_from_user(user_key, psw)
     return JsonResponse(user_ops)
+
+def register_user (request):
+    if request.method == "POST":
+        print (request.POST)
+        new_user = User (request.POST)
+        resp = register_new_user(new_user)
+        return JsonResponse(resp)
+    else:
+        return JsonResponse({})

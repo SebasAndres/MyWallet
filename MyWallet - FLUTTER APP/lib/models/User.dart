@@ -25,7 +25,7 @@ class User {
     for (String key in temp_cats.keys){
       categorias_map[key] = double.parse(temp_cats[key].toString());
     }
-    this.categorias = List.from(categorias_map.keys);
+    this.categorias = List.from(snapshot["categorias"]);
     this.cuentas = List.from(snapshot["cuentas"]);
     this.foto = snapshot["foto"];
   }

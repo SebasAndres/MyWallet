@@ -57,3 +57,24 @@ class ToPay (OPS):
             "nCuota": self.cuote_i,
             "cantCuotas": self.n_cuotes
         }
+    
+class User ():
+    def __init__ (self, usr_data):
+        self.name = usr_data["user"]
+        self.psw = usr_data["psw"]
+        self.categorias = usr_data["categorias"]
+        self.cuentas = usr_data["cuentas"]
+        self.pic = usr_data["pic"]
+        self.ult_op = usr_data["ult_op"]
+
+    def log_in_data (self) -> dict:
+        return {
+            "User": self.name,
+            "Psw": self.psw,
+            "Pic": self.pic,
+            "categorias": self.categorias,
+            "ult_op": self.ult_op
+        }
+    
+    def MPU_data (self) -> dict:
+        return self.cuentas

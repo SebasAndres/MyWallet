@@ -3,7 +3,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from dateutil.relativedelta import relativedelta
 
-from API.models import ToPay
+from API.models import ToPay, User
 import datetime
 
 # Use a service account.
@@ -150,3 +150,12 @@ def move_money (user, psw, ops):
 
     else:
         return {"status": "OK", "error": "Error de autenticacion."}
+
+def register_new_user (user:User):
+    users_docs = LogInReference.stream()
+    for usr_doc in users_docs:
+        if user.name == usr_doc["User"]:
+            return { "error" : "username already exists!" }        
+    # registro en ambas colecciones
+    LogInReference.add(user.log_in_data())
+    MPU_Reference.add(user.MPU_data())
